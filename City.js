@@ -21,6 +21,10 @@ function City(name)
 	this.commodityTypes = {};
 }
 
+
+
+
+
 City.prototype.gainCommodities = function(commodity)
 {
 	var key = commodity.getStorageKey();
@@ -45,41 +49,26 @@ City.prototype.gainCommodities = function(commodity)
 };
 
 
-function Commodity(attr, itemAttr)
-{
-	this.type = attr.type;
-	
-	this.itemAttr = itemAttr;
-	
-	this.amount = attr.amount;
-}
-
-Commodity.prototype.gainAmount = function(amt)
-{
-	this.amount += amt;
-};
-
-Commodity.prototype.getStorageKey = function()
-{
-	console.log(this.itemAttr.toString())
-	return this.itemAttr.toString();
-};
-
-
 var cityManager = new CityManager();
 var city = cityManager.createCity('hamsterTown');
+var itemAttrs = {};
+itemAttrs[ITEM_ATTRS.QUALITY] = 15;
+itemAttrs[ITEM_ATTRS.LEVEL] = 5;
 var com = new Commodity({
 	type: 0,
 	amount: 4},
-	{quality: 5}
+	itemAttrs
 );
 
 city.gainCommodities(com);
 
+var itemAttrs2 = {};
+itemAttrs2[ITEM_ATTRS.QUALITY] = 11;
+itemAttrs2[ITEM_ATTRS.LEVEL] = 8;
 var com2 = new Commodity({
 		type: 0,
 		amount: 2},
-	{quality: 5}
+	itemAttrs2
 );
 
 city.gainCommodities(com2);
