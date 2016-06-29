@@ -21,13 +21,9 @@ function City(name)
 	this.commodityTypes = {};
 }
 
-var ITEM_ATTRS =
-{
-	LEVEL: 0,
-	QUALITY: 1,
-	CONDITION: 2,
-	MAX_CONDITION: 3
-};
+
+
+
 
 City.prototype.gainCommodities = function(commodity)
 {
