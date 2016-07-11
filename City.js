@@ -21,10 +21,6 @@ function City(name)
 	this.commodityTypes = {};
 }
 
-
-
-
-
 City.prototype.gainCommodities = function(commodity)
 {
 	var key = commodity.getStorageKey();
@@ -46,33 +42,6 @@ City.prototype.gainCommodities = function(commodity)
 		cityComType[key] = commodity;
 		console.log(cityComType[key])
 	}
-};
-
-
-function Commodity(attr, itemAttr)
-{
-	this.type = attr.type;
-	
-	this.itemAttr = itemAttr;
-	
-	this.amount = attr.amount;
-}
-
-Commodity.prototype.gainAmount = function(amt)
-{
-	this.amount += amt;
-};
-
-Commodity.prototype.getStorageKey = function()
-{
-	var key = '';
-	for (var i in this.itemAttr)
-	{
-		var attr = this.itemAttr[i];
-		key += i + ':' + attr + ','
-	}
-	console.log(key);
-	return key
 };
 
 
