@@ -23,7 +23,7 @@ var addItemAttr = function (id, name)
 	return attr;
 };
 
-var COMMODITY_TYPES =
+var COMMODITY_IDS =
 {
 	BONE: 0,
 	MAMMAL_MEAT: 1
@@ -48,24 +48,28 @@ var INIT_COMMODITY = function ()
 	addItemAttr(ITEM_ATTRS.LEVEL, "Level");
 	addItemAttr(ITEM_ATTRS.QUALITY, "Quality");
 
-	addCommodityType(COMMODITY_TYPES.BONE, 'Bones',
+	addCommodityType(COMMODITY_IDS.BONE, 'Bones',
 		[ITEM_ATTRS.CONDITION, ITEM_ATTRS.LEVEL, ITEM_ATTRS.QUALITY]
 	);
-	addCommodityType(COMMODITY_TYPES.MAMMAL_MEAT, 'Mammal Meat',
+	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat',
 		[ITEM_ATTRS.CONDITION, ITEM_ATTRS.LEVEL, ITEM_ATTRS.QUALITY]
 	);
 };
 
-function Commodity(attr, itemAttr)
+INIT_COMMODITY();
+
+function Commodity(passed)
 {
-	this.type = attr.type;
+	this.type = passed.type;
 
 	this.itemAttr = {};
 	var codexItemAttrs = COMMODITY_CODEX[this.type].itemAttr;
 
 	for (var key in codexItemAttrs)
 	{
-		var passedAttr = itemAttr.key;
+		console.log(key)
+		var passedAttr = passed.itemAttr ? passed.itemAttr.key : null;
+		console.log(passedAttr)
 		if (passedAttr)
 		{
 			var value = passedAttr.value ? passedAttr.value : 0;
@@ -84,7 +88,7 @@ function Commodity(attr, itemAttr)
 		}
 	}
 
-	this.amount = attr.amount;
+	this.amount = passed.amount;
 }
 
 Commodity.prototype.gainAmount = function (amt)
@@ -95,24 +99,35 @@ Commodity.prototype.gainAmount = function (amt)
 Commodity.prototype.getStorageKey = function ()
 {
 	var key = '';
+	console.log(this.itemAttr)
 	for (var i in this.itemAttr)
 	{
 		var attr = this.itemAttr[i];
 		key += i + ':' + attr + ','
 	}
-	console.log(key);
 	return key
 };
 
-Commodity.prototype.splitNew = function (newItemAttr, amount)
+Commodity.prototype.splitNew = function (newItemAttrs, amount)
 {
-	
-}
+	if (amount > this.amount)
+	{
+		amount = this.amount;
+	}
+	var newCommodity = Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
+	this.amount -= amount;
+	if (amount <= 0)
+	{
+		//die
+	}
+	return newCommodity;
+};
+
 
 
 module.exports =
 {
 	ITEM_ATTRS: ITEM_ATTRS,
-	COMMODITY_TYPES: COMMODITY_TYPES,
+	COMMODITY_IDS: COMMODITY_IDS,
 	Commodity: Commodity
 };

@@ -2,6 +2,10 @@
  * Created by alexanderyan on 6/6/16.
  */
 
+var Com = require('./Commodity');
+var Commodity = Com.Commodity;
+var COMMODITY_IDS = Com.COMMODITY_IDS;
+
 function CityManager()
 {
 	this.cities = [];
@@ -32,7 +36,6 @@ City.prototype.gainCommodities = function(commodity)
 		this.commodityTypes[key] = cityComType
 	}
 	var uniqueCom = cityComType[key];
-	console.log(uniqueCom);
 	if (uniqueCom)
 	{
 		uniqueCom.gainAmount(commodity.amount);
@@ -47,27 +50,10 @@ City.prototype.gainCommodities = function(commodity)
 
 var cityManager = new CityManager();
 var city = cityManager.createCity('hamsterTown');
-var itemAttrs = {};
-itemAttrs[ITEM_ATTRS.QUALITY] = 15;
-itemAttrs[ITEM_ATTRS.LEVEL] = 5;
-var com = new Commodity({
-	type: 0,
-	amount: 4},
-	itemAttrs
-);
 
-city.gainCommodities(com);
+var com = new Commodity({type: COMMODITY_IDS.BONE, amount: 100});
+console.log(com, com.getStorageKey());
 
-var itemAttrs2 = {};
-itemAttrs2[ITEM_ATTRS.QUALITY] = 11;
-itemAttrs2[ITEM_ATTRS.LEVEL] = 8;
-var com2 = new Commodity({
-		type: 0,
-		amount: 2},
-	itemAttrs2
-);
-
-city.gainCommodities(com2);
 
 console.log(city.commodityTypes);
 
