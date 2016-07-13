@@ -5,6 +5,7 @@
 var Com = require('./Commodity');
 var Commodity = Com.Commodity;
 var COMMODITY_IDS = Com.COMMODITY_IDS;
+var ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
 
 function CityManager()
 {
@@ -43,7 +44,6 @@ City.prototype.gainCommodities = function(commodity)
 	else 
 	{
 		cityComType[key] = commodity;
-		console.log(cityComType[key])
 	}
 };
 
@@ -52,8 +52,10 @@ var cityManager = new CityManager();
 var city = cityManager.createCity('hamsterTown');
 
 var com = new Commodity({type: COMMODITY_IDS.BONE, amount: 100});
-console.log(com, com.getStorageKey());
+console.log(com.getStorageKey());
 
-
-console.log(city.commodityTypes);
+var attr = {};
+attr[ITEM_ATTR_ID.LEVEL] = {value: 10, maxValue: 100};
+var com2 = com.splitNew(attr, 5);
+console.log(com2.getStorageKey());
 

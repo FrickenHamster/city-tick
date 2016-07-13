@@ -4,7 +4,7 @@
 
 var initialized = false;
 
-var ITEM_ATTRS =
+var ITEM_ATTR_ID =
 {
 	LEVEL: 0,
 	QUALITY: 1,
@@ -44,15 +44,15 @@ var addCommodityType = function (id, name, itemAttrs)
 
 var INIT_COMMODITY = function ()
 {
-	addItemAttr(ITEM_ATTRS.CONDITION, 'Condition');
-	addItemAttr(ITEM_ATTRS.LEVEL, "Level");
-	addItemAttr(ITEM_ATTRS.QUALITY, "Quality");
+	addItemAttr(ITEM_ATTR_ID.CONDITION, 'Condition');
+	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
+	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
 
 	addCommodityType(COMMODITY_IDS.BONE, 'Bones',
-		[ITEM_ATTRS.CONDITION, ITEM_ATTRS.LEVEL, ITEM_ATTRS.QUALITY]
+		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
 	);
 	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat',
-		[ITEM_ATTRS.CONDITION, ITEM_ATTRS.LEVEL, ITEM_ATTRS.QUALITY]
+		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
 	);
 };
 
@@ -61,27 +61,23 @@ INIT_COMMODITY();
 function Commodity(passed)
 {
 	this.type = passed.type;
-
-	this.itemAttr = {};
-	var codexItemAttrs = COMMODITY_CODEX[this.type].itemAttr;
-
+	this.itemAttrs = {};
+	var codexItemAttrs = COMMODITY_CODEX[this.type].itemAttrs;
 	for (var key in codexItemAttrs)
 	{
-		console.log(key)
-		var passedAttr = passed.itemAttr ? passed.itemAttr.key : null;
-		console.log(passedAttr)
+		let passedAttr = passed.itemAttrs ? passed.itemAttrs[key] : null;
 		if (passedAttr)
 		{
 			var value = passedAttr.value ? passedAttr.value : 0;
 			var maxValue = passedAttr.value ? passedAttr.maxValue : 9999;
-			this.itemAttr[key] = {
+			this.itemAttrs[key] = {
 				value: value,
 				maxValue: maxValue
 			}
 		}
 		else
 		{
-			this.itemAttr[key] = {
+			this.itemAttrs[key] = {
 				value: 0,
 				maxValue: 9999
 			};
@@ -99,11 +95,10 @@ Commodity.prototype.gainAmount = function (amt)
 Commodity.prototype.getStorageKey = function ()
 {
 	var key = '';
-	console.log(this.itemAttr)
-	for (var i in this.itemAttr)
+	for (var i in this.itemAttrs)
 	{
-		var attr = this.itemAttr[i];
-		key += i + ':' + attr + ','
+		var attr = this.itemAttrs[i];
+		key += i + ':' + attr.value + ':' + attr.maxValue;
 	}
 	return key
 };
@@ -114,12 +109,13 @@ Commodity.prototype.splitNew = function (newItemAttrs, amount)
 	{
 		amount = this.amount;
 	}
-	var newCommodity = Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
+	var newCommodity = new Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
 	this.amount -= amount;
 	if (amount <= 0)
 	{
 		//die
 	}
+	console.log(newItemAttrs);
 	return newCommodity;
 };
 
@@ -127,7 +123,7 @@ Commodity.prototype.splitNew = function (newItemAttrs, amount)
 
 module.exports =
 {
-	ITEM_ATTRS: ITEM_ATTRS,
+	ITEM_ATTR_ID: ITEM_ATTR_ID,
 	COMMODITY_IDS: COMMODITY_IDS,
 	Commodity: Commodity
 };
