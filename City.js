@@ -2,6 +2,9 @@
  * Created by alexanderyan on 6/6/16.
  */
 
+"use strict";
+
+
 var Com = require('./Commodity');
 var Commodity = Com.Commodity;
 var COMMODITY_IDS = Com.COMMODITY_IDS;
@@ -12,7 +15,7 @@ function CityManager()
 	this.cities = [];
 }
 
-CityManager.prototype.createCity = function(name)
+CityManager.prototype.createCity = function (name)
 {
 	var city = new City(name);
 	this.cities.push(city);
@@ -22,15 +25,24 @@ CityManager.prototype.createCity = function(name)
 function City(name)
 {
 	this.name = name;
-	
+
 	this.commodityTypes = {};
+
+	this.population = 0;
+	this.growthRate = 1;
 }
 
-City.prototype.gainCommodities = function(commodity)
+City.prototype.cityTick = function ()
+{
+	this.population += this.growthRate;
+};
+
+
+City.prototype.gainCommodities = function (commodity)
 {
 	var key = commodity.getStorageKey();
 	var cityComType = this.commodityTypes[commodity.type];
-	
+
 	if (!cityComType)
 	{
 		cityComType = {};
@@ -41,11 +53,12 @@ City.prototype.gainCommodities = function(commodity)
 	{
 		uniqueCom.gainAmount(commodity.amount);
 	}
-	else 
+	else
 	{
 		cityComType[key] = commodity;
 	}
 };
+
 
 
 var cityManager = new CityManager();

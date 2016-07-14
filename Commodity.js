@@ -31,13 +31,14 @@ var COMMODITY_IDS =
 
 var COMMODITY_CODEX = {};
 
-var addCommodityType = function (id, name, itemAttrs)
+var addCommodityType = function (id, name, props, itemAttrs)
 {
 	var com = {
 		id: id,
 		name: name,
 		itemAttrs: itemAttrs
 	};
+	this.edible = props.edible
 	COMMODITY_CODEX[id] = com;
 	return com;
 };
