@@ -38,7 +38,7 @@ var addCommodityType = function (id, name, props, itemAttrs)
 		name: name,
 		itemAttrs: itemAttrs
 	};
-	this.edible = props.edible
+	this.edibility = props.edibility;
 	COMMODITY_CODEX[id] = com;
 	return com;
 };

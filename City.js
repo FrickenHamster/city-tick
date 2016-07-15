@@ -10,6 +10,8 @@ var Commodity = Com.Commodity;
 var COMMODITY_IDS = Com.COMMODITY_IDS;
 var ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
 
+var BankAccount = require('./Economy').BankAccount;
+
 function CityManager()
 {
 	this.cities = [];
