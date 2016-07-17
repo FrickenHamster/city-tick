@@ -14,6 +14,6 @@ class Edibility
 	}
 }
 
-exports = {
+module.exports = {
 	Edibility: Edibility
-}
+};

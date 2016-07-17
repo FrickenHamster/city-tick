@@ -2,7 +2,6 @@
  * Created by alexanderyan on 7/14/16.
  */
 
-
 class BankAccount
 {
 	constructor()
@@ -11,6 +10,6 @@ class BankAccount
 	}
 }
 
-exports = {
+module.exports = {
 	BankAccount: BankAccount
 };

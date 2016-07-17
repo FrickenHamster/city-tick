@@ -5,66 +5,81 @@
 "use strict";
 
 
-var Com = require('./Commodity');
-var Commodity = Com.Commodity;
-var COMMODITY_IDS = Com.COMMODITY_IDS;
-var ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
+let Com = require('./Commodity');
+let Commodity = Com.Commodity;
+let COMMODITY_IDS = Com.COMMODITY_IDS;
+let ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
 
-var BankAccount = require('./Economy').BankAccount;
+let BankAccount = require('./Economy').BankAccount;
 
-var SpeciesMod = require('./Species');
+let SpeciesMod = require('./Species');
 let Species = SpeciesMod.Species;
 let Niche = SpeciesMod.Niche;
 
-function CityManager()
+class CityManager
 {
-	this.cities = [];
+	constructor()
+	{
+		this.cities = [];
+
+	}
+	
+	createCity(name)
+	{
+		var city = new City(name);
+		this.cities.push(city);
+		return city;
+	}
+	
+	
+
 }
 
-CityManager.prototype.createCity = function (name)
+
+class City
 {
-	var city = new City(name);
-	this.cities.push(city);
-	return city;
-};
+	
+	constructor(name)
+	{
+		this.name = name;
 
-function City(name)
-{
-	this.name = name;
+		this.commodityTypes = {};
 
-	this.commodityTypes = {};
+		this.population = 0;
+		this.growthRate = 1;
+		this.species = new Species(Niche.OMNIVORE);
+	}
+	
+	cityTick()
+	{
+		this.population += this.growthRate;
 
-	this.population = 0;
-	this.growthRate = 1;
-	this.species = new Species(Niche.OMNIVORE);
+	}
+	
+	gainCommidities()
+	{
+		var key = commodity.getStorageKey();
+		var cityComType = this.commodityTypes[commodity.type];
+
+		if (!cityComType)
+		{
+			cityComType = {};
+			this.commodityTypes[key] = cityComType
+		}
+		var uniqueCom = cityComType[key];
+		if (uniqueCom)
+		{
+			uniqueCom.gainAmount(commodity.amount);
+		}
+		else
+		{
+			cityComType[key] = commodity;
+		}
+	}
+	
 }
 
-City.prototype.cityTick = function ()
-{
-	this.population += this.growthRate;
-};
 
-
-City.prototype.gainCommodities = function (commodity)
-{
-	var key = commodity.getStorageKey();
-	var cityComType = this.commodityTypes[commodity.type];
-
-	if (!cityComType)
-	{
-		cityComType = {};
-		this.commodityTypes[key] = cityComType
-	}
-	var uniqueCom = cityComType[key];
-	if (uniqueCom)
-	{
-		uniqueCom.gainAmount(commodity.amount);
-	}
-	else
-	{
-		cityComType[key] = commodity;
-	}
-};
 
 
 
