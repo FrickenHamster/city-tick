@@ -12,6 +12,10 @@ var ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
 
 var BankAccount = require('./Economy').BankAccount;
 
+var SpeciesMod = require('./Species');
+let Species = SpeciesMod.Species;
+let Niche = SpeciesMod.Niche;
+
 function CityManager()
 {
 	this.cities = [];
@@ -32,6 +36,7 @@ function City(name)
 
 	this.population = 0;
 	this.growthRate = 1;
+	this.species = new Species(Niche.OMNIVORE);
 }
 
 City.prototype.cityTick = function ()
