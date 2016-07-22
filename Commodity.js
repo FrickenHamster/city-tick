@@ -2,6 +2,8 @@
  * Created by alexanderyan on 6/28/16.
  */
 
+let Niche = require("./Species").Niche;
+
 let initialized = false;
 
 let ITEM_ATTR_ID =
@@ -26,7 +28,9 @@ let addItemAttr = function (id, name)
 let COMMODITY_IDS =
 {
 	BONE: 0,
-	MAMMAL_MEAT: 1
+	MAMMAL_MEAT: 1,
+	APPLE: 10,
+	STONE: 50,
 };
 
 let COMMODITY_CODEX = {};
@@ -38,7 +42,22 @@ let addCommodityType = function (id, name, props, itemAttrs)
 		name: name,
 		itemAttrs: itemAttrs
 	};
-	this.edibility = props.edibility;
+	if (props.niches)
+	{
+		com.edibility = {};
+		for (let i in props.niches)
+		{
+			let niche = props.niches[i];
+			com.edibility[niche] = true;
+		}
+		com.isFood = true;
+	}
+	else
+	{
+		com.isFood = false;
+	}
+	console.log(com.edibility);
+
 	COMMODITY_CODEX[id] = com;
 	return com;
 };
@@ -49,12 +68,35 @@ let INIT_COMMODITY = function ()
 	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
 	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
 
-	addCommodityType(COMMODITY_IDS.BONE, 'Bones',
+	addCommodityType(COMMODITY_IDS.BONE, 'Bones', {
+			niches: [
+				Niche.SCAVENGER
+			]
+		},
 		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
 	);
-	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat',
+	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat', {
+			niches: [
+				Niche.CARNIVORE,
+				Niche.OMNIVORE,
+				Niche.SCAVENGER
+			]
+		},
 		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
 	);
+	addCommodityType(COMMODITY_IDS.APPLE, 'Apple', {
+			niches: [
+				Niche.OMNIVORE,
+				Niche.HERBIVORE
+			]
+		},
+		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
+	);
+	addCommodityType(COMMODITY_IDS.STONE, 'Stone', {
+		},
+		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
+	);
+	
 };
 
 INIT_COMMODITY();
@@ -64,6 +106,7 @@ class Commodity {
 	{
 		this.type = passed.type;
 		this.itemAttrs = {};
+		this.codexEntry = COMMODITY_CODEX[this.type];
 		let codexItemAttrs = COMMODITY_CODEX[this.type].itemAttrs;
 		for (let key in codexItemAttrs)
 		{
@@ -86,12 +129,23 @@ class Commodity {
 			}
 		}
 		this.amount = passed.amount;
+		this.inventory = passed.inventory;
 	}
 
 	gainAmount(amt)
 	{
 		this.amount += amt;
 	};
+
+	loseAmount(amt)
+	{
+		this.amount -= amt;
+		if (this.amount <= 0)
+		{
+			die();
+		}
+		return this.amount;
+	}
 
 	getStorageKey()
 	{
@@ -114,10 +168,23 @@ class Commodity {
 		this.amount -= amount;
 		if (amount <= 0)
 		{
-			//die
+			this.die();
 		}
 		return newCommodity;
 	};
+	
+	die()
+	{
+		if (this.inventory)
+		{
+			this.inventory.loseCommodity(this);
+		}
+	}
+
+	canBeEatenByNiche(niche)
+	{
+		return this.codexEntry.edibility[niche];
+	}
 
 }
 

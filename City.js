@@ -12,6 +12,8 @@ let ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
 
 let BankAccount = require('./Economy').BankAccount;
 
+let Inventory = require('./Inventory').Inventory;
+
 let SpeciesMod = require('./Species');
 let Species = SpeciesMod.Species;
 let Niche = SpeciesMod.Niche;
@@ -21,7 +23,7 @@ class CityManager
 	constructor()
 	{
 		this.cities = [];
-
+		this.inventory = new Inventory(Niche.OMNIVORE);
 	}
 	
 	createCity(name)
@@ -30,9 +32,6 @@ class CityManager
 		this.cities.push(city);
 		return city;
 	}
-	
-	
-
 }
 
 
@@ -43,54 +42,22 @@ class City
 	{
 		this.name = name;
 
-		this.commodityTypes = {};
 
 		this.population = 0;
 		this.growthRate = 1;
 		this.species = new Species(Niche.OMNIVORE);
+		
+		this.inventory = new Inventory(this.species.niche);
 	}
 	
 	cityTick()
 	{
+		let growth = this.growthRate;
+		
+		
 		this.population += this.growthRate;
-
-	}
-	
-	gainCommidities()
-	{
-		var key = commodity.getStorageKey();
-		var cityComType = this.commodityTypes[commodity.type];
-
-		if (!cityComType)
-		{
-			cityComType = {};
-			this.commodityTypes[key] = cityComType
-		}
-		var uniqueCom = cityComType[key];
-		if (uniqueCom)
-		{
-			uniqueCom.gainAmount(commodity.amount);
-		}
-		else
-		{
-			cityComType[key] = commodity;
-		}
+		
 	}
 	
 }
-
-
-
-
-
-var cityManager = new CityManager();
-var city = cityManager.createCity('hamsterTown');
-
-var com = new Commodity({type: COMMODITY_IDS.BONE, amount: 100});
-console.log(com.getStorageKey());
-
-var attr = {};
-attr[ITEM_ATTR_ID.LEVEL] = {value: 10, maxValue: 100};
-var com2 = com.splitNew(attr, 5);
-console.log(com2.getStorageKey());
 
