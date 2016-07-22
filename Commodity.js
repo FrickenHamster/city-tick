@@ -3,10 +3,11 @@
  */
 
 let Niche = require("./Species").Niche;
+let fs = require('fs');
 
 let initialized = false;
 
-let ITEM_ATTR_ID =
+const ITEM_ATTR_ID =
 {
 	LEVEL: 0,
 	QUALITY: 1,
@@ -25,7 +26,7 @@ let addItemAttr = function (id, name)
 	return attr;
 };
 
-let COMMODITY_IDS =
+const COMMODITY_IDS =
 {
 	BONE: 0,
 	MAMMAL_MEAT: 1,
@@ -56,7 +57,6 @@ let addCommodityType = function (id, name, props, itemAttrs)
 	{
 		com.isFood = false;
 	}
-	console.log(com.edibility);
 
 	COMMODITY_CODEX[id] = com;
 	return com;
@@ -68,7 +68,7 @@ let INIT_COMMODITY = function ()
 	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
 	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
 
-	addCommodityType(COMMODITY_IDS.BONE, 'Bones', {
+	/*addCommodityType(COMMODITY_IDS.BONE, 'Bones', {
 			niches: [
 				Niche.SCAVENGER
 			]
@@ -95,8 +95,41 @@ let INIT_COMMODITY = function ()
 	addCommodityType(COMMODITY_IDS.STONE, 'Stone', {
 		},
 		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
+	);*/
 	
+	var comsJson = JSON.parse(fs.readFileSync('./scripts/commodities.json', 'utf8'));
+	for (let idKey in comsJson)
+	{
+		let comType = comsJson[idKey];
+		let id = COMMODITY_IDS[idKey];
+		if (id === undefined)
+			continue;
+		let name = comType.name;
+		let props = {};
+
+		if (comType.props.niches)
+		{
+			let niches = [];
+			for (let nicheKey in comType.props.niches)
+			{
+				let nicheENUM = comType.props.niches[nicheKey];
+				let nicheID = Niche[nicheENUM];
+				if (nicheID)
+					niches.push(nicheID);
+			}
+			props.niches = niches;
+		}
+		let itemAttrs = [];
+		for (let itemAttrKey in comType.itemAttrs)
+		{
+			let itemAttrENUM = comType.itemAttrs[itemAttrKey];
+			let itemAttrID = ITEM_ATTR_ID[itemAttrENUM];
+			if (itemAttrID)
+				itemAttrs.push(itemAttrID);
+		}
+		addCommodityType(id, name, props, itemAttrs);
+	}
+		
 };
 
 INIT_COMMODITY();

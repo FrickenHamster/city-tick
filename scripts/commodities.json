@@ -1,0 +1,56 @@
+{
+  "BONE": {
+    "name": "Bones",
+    "props": {
+      "niches": [
+        "SCAVENGER"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "APPLE": {
+    "name": "Apple",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "HERBIVORE"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "MAMMAL_MEAT": {
+    "name": "Mammal Meat",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "HERBIVORE",
+        "SCAVENGER"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "STONE": {
+    "name": "Stone",
+    "props": {
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  }
+}
+
+
