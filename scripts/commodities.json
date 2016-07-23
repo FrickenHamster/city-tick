@@ -12,6 +12,62 @@
       "QUALITY"
     ]
   },
+  "ANIMAL_CARCASS": {
+    "name": "Animal Carcass",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "CARNIVORE"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "FISH": {
+    "name": "Fish",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "CARNIVORE"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "ANIMAL_MEAT": {
+    "name": "Animal Meat",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "CARNIVORE"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "FISH_FILLET": {
+    "name": "Fish Fillet",
+    "props": {
+      "niches": [
+        "OMNIVORE",
+        "CARNIVORE"
+      ]
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
   "APPLE": {
     "name": "Apple",
     "props": {
@@ -26,14 +82,9 @@
       "QUALITY"
     ]
   },
-  "MAMMAL_MEAT": {
-    "name": "Mammal Meat",
+  "WOOD": {
+    "name": "Wood",
     "props": {
-      "niches": [
-        "OMNIVORE",
-        "HERBIVORE",
-        "SCAVENGER"
-      ]
     },
     "itemAttrs": [
       "CONDITION",
@@ -43,6 +94,16 @@
   },
   "STONE": {
     "name": "Stone",
+    "props": {
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
+  },
+  "IRON_ORE": {
+    "name": "Iron Ore",
     "props": {
     },
     "itemAttrs": [

@@ -29,9 +29,15 @@ let addItemAttr = function (id, name)
 const COMMODITY_IDS =
 {
 	BONE: 0,
-	MAMMAL_MEAT: 1,
-	APPLE: 10,
+	ANIMAL_CARCASS: 1, 
+	FISH: 2, 
+	ANIMAL_MEAT: 10,
+	FISH_FILLET: 11,
+	APPLE: 20,
+	WOOD: 40,
 	STONE: 50,
+	IRON_ORE: 51,
+	
 };
 
 let COMMODITY_CODEX = {};
@@ -67,35 +73,6 @@ let INIT_COMMODITY = function ()
 	addItemAttr(ITEM_ATTR_ID.CONDITION, 'Condition');
 	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
 	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
-
-	/*addCommodityType(COMMODITY_IDS.BONE, 'Bones', {
-			niches: [
-				Niche.SCAVENGER
-			]
-		},
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
-	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat', {
-			niches: [
-				Niche.CARNIVORE,
-				Niche.OMNIVORE,
-				Niche.SCAVENGER
-			]
-		},
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
-	addCommodityType(COMMODITY_IDS.APPLE, 'Apple', {
-			niches: [
-				Niche.OMNIVORE,
-				Niche.HERBIVORE
-			]
-		},
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
-	addCommodityType(COMMODITY_IDS.STONE, 'Stone', {
-		},
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);*/
 	
 	var comsJson = JSON.parse(fs.readFileSync('./scripts/commodities.json', 'utf8'));
 	for (let idKey in comsJson)
@@ -129,7 +106,6 @@ let INIT_COMMODITY = function ()
 		}
 		addCommodityType(id, name, props, itemAttrs);
 	}
-		
 };
 
 INIT_COMMODITY();
