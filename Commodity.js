@@ -68,13 +68,16 @@ let addCommodityType = function (id, name, props, itemAttrs)
 	return com;
 };
 
-let INIT_COMMODITY = function ()
+function INIT_COMMODITY ()
 {
 	addItemAttr(ITEM_ATTR_ID.CONDITION, 'Condition');
 	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
 	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
 	
-	var comsJson = JSON.parse(fs.readFileSync('./scripts/commodities.json', 'utf8'));
+	let path = './scripts/commodities.json';
+	if (!fs.existsSync(path))
+		path = '../scripts/commodities.json';
+	var comsJson = JSON.parse(fs.readFileSync(path, 'utf8'));
 	for (let idKey in comsJson)
 	{
 		let comType = comsJson[idKey];
@@ -101,12 +104,12 @@ let INIT_COMMODITY = function ()
 		{
 			let itemAttrENUM = comType.itemAttrs[itemAttrKey];
 			let itemAttrID = ITEM_ATTR_ID[itemAttrENUM];
-			if (itemAttrID)
+			if (itemAttrID || itemAttrID == 0)
 				itemAttrs.push(itemAttrID);
 		}
 		addCommodityType(id, name, props, itemAttrs);
 	}
-};
+}
 
 INIT_COMMODITY();
 
@@ -137,7 +140,7 @@ class Commodity {
 				};
 			}
 		}
-		this.amount = passed.amount;
+		this.amount = passed.amount ? passed.amount : 0;
 		this.inventory = passed.inventory;
 	}
 
@@ -151,7 +154,7 @@ class Commodity {
 		this.amount -= amt;
 		if (this.amount <= 0)
 		{
-			die();
+			this.die();
 		}
 		return this.amount;
 	}
@@ -162,7 +165,7 @@ class Commodity {
 		for (let i in this.itemAttrs)
 		{
 			let attr = this.itemAttrs[i];
-			key += i + ':' + attr.value + ':' + attr.maxValue;
+			key += i + ':' + attr.value + ':' + attr.maxValue + '|';
 		}
 		return key
 	};
@@ -175,7 +178,7 @@ class Commodity {
 		}
 		let newCommodity = new Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
 		this.amount -= amount;
-		if (amount <= 0)
+		if (this.amount <= 0)
 		{
 			this.die();
 		}

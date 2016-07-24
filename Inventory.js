@@ -19,22 +19,22 @@ class Inventory
 
 	gainCommodities(commodity)
 	{
-		let key = commodity.getStorageKey();
+		let storageKey = commodity.getStorageKey();
 		let comTypeGroup = this.commodityTypes[commodity.type];
 
 		if (!comTypeGroup)
 		{
 			comTypeGroup = {};
-			this.commodityTypes[key] = comTypeGroup;
+			this.commodityTypes[commodity.type] = comTypeGroup;
 		}
-		let uniqueCom = comTypeGroup[key];
+		let uniqueCom = comTypeGroup[storageKey];
 		if (uniqueCom)
 		{
 			uniqueCom.gainAmount(commodity.amount);
 		}
 		else
 		{
-			comTypeGroup[key] = commodity;
+			comTypeGroup[storageKey] = commodity;
 			commodity.inventory = this;
 			if (commodity.canBeEatenByNiche(this.niche))
 			{
@@ -73,15 +73,20 @@ class Inventory
 		{
 			let com = this.foodList[i];
 			let fm = Math.floor(com.amount * ratio);
+			if (curTaken + fm > amt)
+				fm = amt - curTaken;
 			com.loseAmount(fm);
 			curTaken += fm;
+			if (curTaken >= amt)
+				return;
 		}
 		for (let i = 0; i < this.foodList.length; i++)
 		{
 			if (curTaken >= amt)
 				break;
 			let com = this.foodList[i];
-			com.loseAmount(1)
+			com.loseAmount(1);
+			curTaken += 1;
 		}
 	}
 	
