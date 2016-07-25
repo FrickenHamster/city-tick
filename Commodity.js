@@ -2,20 +2,23 @@
  * Created by alexanderyan on 6/28/16.
  */
 
-var initialized = false;
+let Niche = require("./Species").Niche;
+let fs = require('fs');
 
-var ITEM_ATTR_ID =
+let initialized = false;
+
+const ITEM_ATTR_ID =
 {
 	LEVEL: 0,
 	QUALITY: 1,
 	CONDITION: 2,
 };
 
-var ITEM_ATTR_CODEX = {};
+let ITEM_ATTR_CODEX = {};
 
-var addItemAttr = function (id, name)
+let addItemAttr = function (id, name)
 {
-	var attr = {
+	let attr = {
 		id: id,
 		name: name,
 	};
@@ -23,103 +26,179 @@ var addItemAttr = function (id, name)
 	return attr;
 };
 
-var COMMODITY_IDS =
+const COMMODITY_IDS =
 {
 	BONE: 0,
-	MAMMAL_MEAT: 1
+	ANIMAL_CARCASS: 1, 
+	FISH: 2, 
+	ANIMAL_MEAT: 10,
+	FISH_FILLET: 11,
+	APPLE: 20,
+	WOOD: 40,
+	STONE: 50,
+	IRON_ORE: 51,
+	
 };
 
-var COMMODITY_CODEX = {};
+let COMMODITY_CODEX = {};
 
-var addCommodityType = function (id, name, itemAttrs)
+let addCommodityType = function (id, name, props, itemAttrs)
 {
-	var com = {
+	let com = {
 		id: id,
 		name: name,
 		itemAttrs: itemAttrs
 	};
+	if (props.niches)
+	{
+		com.edibility = {};
+		for (let i in props.niches)
+		{
+			let niche = props.niches[i];
+			com.edibility[niche] = true;
+		}
+		com.isFood = true;
+	}
+	else
+	{
+		com.isFood = false;
+	}
+
 	COMMODITY_CODEX[id] = com;
 	return com;
 };
 
-var INIT_COMMODITY = function ()
+function INIT_COMMODITY ()
 {
 	addItemAttr(ITEM_ATTR_ID.CONDITION, 'Condition');
 	addItemAttr(ITEM_ATTR_ID.LEVEL, "Level");
 	addItemAttr(ITEM_ATTR_ID.QUALITY, "Quality");
+	
+	let path = './scripts/commodities.json';
+	if (!fs.existsSync(path))
+		path = '../scripts/commodities.json';
+	var comsJson = JSON.parse(fs.readFileSync(path, 'utf8'));
+	for (let idKey in comsJson)
+	{
+		let comType = comsJson[idKey];
+		let id = COMMODITY_IDS[idKey];
+		if (id === undefined)
+			continue;
+		let name = comType.name;
+		let props = {};
 
-	addCommodityType(COMMODITY_IDS.BONE, 'Bones',
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
-	addCommodityType(COMMODITY_IDS.MAMMAL_MEAT, 'Mammal Meat',
-		[ITEM_ATTR_ID.CONDITION, ITEM_ATTR_ID.LEVEL, ITEM_ATTR_ID.QUALITY]
-	);
-};
+		if (comType.props.niches)
+		{
+			let niches = [];
+			for (let nicheKey in comType.props.niches)
+			{
+				let nicheENUM = comType.props.niches[nicheKey];
+				let nicheID = Niche[nicheENUM];
+				if (nicheID)
+					niches.push(nicheID);
+			}
+			props.niches = niches;
+		}
+		let itemAttrs = [];
+		for (let itemAttrKey in comType.itemAttrs)
+		{
+			let itemAttrENUM = comType.itemAttrs[itemAttrKey];
+			let itemAttrID = ITEM_ATTR_ID[itemAttrENUM];
+			if (itemAttrID || itemAttrID == 0)
+				itemAttrs.push(itemAttrID);
+		}
+		addCommodityType(id, name, props, itemAttrs);
+	}
+}
 
 INIT_COMMODITY();
 
-function Commodity(passed)
-{
-	this.type = passed.type;
-	this.itemAttrs = {};
-	var codexItemAttrs = COMMODITY_CODEX[this.type].itemAttrs;
-	for (var key in codexItemAttrs)
+class Commodity {
+	constructor(passed)
 	{
-		let passedAttr = passed.itemAttrs ? passed.itemAttrs[key] : null;
-		if (passedAttr)
+		this.type = passed.type;
+		this.itemAttrs = {};
+		this.codexEntry = COMMODITY_CODEX[this.type];
+		let codexItemAttrs = COMMODITY_CODEX[this.type].itemAttrs;
+		for (let key in codexItemAttrs)
 		{
-			var value = passedAttr.value ? passedAttr.value : 0;
-			var maxValue = passedAttr.value ? passedAttr.maxValue : 9999;
-			this.itemAttrs[key] = {
-				value: value,
-				maxValue: maxValue
+			let passedAttr = passed.itemAttrs ? passed.itemAttrs[key] : null;
+			if (passedAttr)
+			{
+				let value = passedAttr.value ? passedAttr.value : 0;
+				let maxValue = passedAttr.value ? passedAttr.maxValue : 9999;
+				this.itemAttrs[key] = {
+					value: value,
+					maxValue: maxValue
+				}
+			}
+			else
+			{
+				this.itemAttrs[key] = {
+					value: 0,
+					maxValue: 9999
+				};
 			}
 		}
-		else
+		this.amount = passed.amount ? passed.amount : 0;
+		this.inventory = passed.inventory;
+	}
+
+	gainAmount(amt)
+	{
+		this.amount += amt;
+	};
+
+	loseAmount(amt)
+	{
+		this.amount -= amt;
+		if (this.amount <= 0)
 		{
-			this.itemAttrs[key] = {
-				value: 0,
-				maxValue: 9999
-			};
+			this.die();
+		}
+		return this.amount;
+	}
+
+	getStorageKey()
+	{
+		let key = '';
+		for (let i in this.itemAttrs)
+		{
+			let attr = this.itemAttrs[i];
+			key += i + ':' + attr.value + ':' + attr.maxValue + '|';
+		}
+		return key
+	};
+
+	splitNew(newItemAttrs, amount)
+	{
+		if (amount > this.amount)
+		{
+			amount = this.amount;
+		}
+		let newCommodity = new Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
+		this.amount -= amount;
+		if (this.amount <= 0)
+		{
+			this.die();
+		}
+		return newCommodity;
+	};
+	
+	die()
+	{
+		if (this.inventory)
+		{
+			this.inventory.loseCommodity(this);
 		}
 	}
 
-	this.amount = passed.amount;
+	canBeEatenByNiche(niche)
+	{
+		return this.codexEntry.edibility[niche];
+	}
+
 }
-
-Commodity.prototype.gainAmount = function (amt)
-{
-	this.amount += amt;
-};
-
-Commodity.prototype.getStorageKey = function ()
-{
-	var key = '';
-	for (var i in this.itemAttrs)
-	{
-		var attr = this.itemAttrs[i];
-		key += i + ':' + attr.value + ':' + attr.maxValue;
-	}
-	return key
-};
-
-Commodity.prototype.splitNew = function (newItemAttrs, amount)
-{
-	if (amount > this.amount)
-	{
-		amount = this.amount;
-	}
-	var newCommodity = new Commodity({type: this.type, amount: amount, itemAttrs: newItemAttrs});
-	this.amount -= amount;
-	if (amount <= 0)
-	{
-		//die
-	}
-	console.log(newItemAttrs);
-	return newCommodity;
-};
-
-
 
 module.exports =
 {
