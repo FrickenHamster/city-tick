@@ -54,10 +54,16 @@ class City
 	{
 		let growth = this.growthRate;
 		
-		
+		this.inventory.loseFood(this.population);
 		this.population += this.growthRate;
+		this.printInfo();
+	}
+	
+	printInfo()
+	{
+		console.log("Population:" + this.population);
+		console.log("Food Supplies:" + this.inventory.foodAmount());
 		
 	}
 	
 }
-
