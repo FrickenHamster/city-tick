@@ -10,7 +10,6 @@ class Job
 {
 	constructor(workerLimit)
 	{
-		
 	}
 }
 
@@ -22,3 +21,5 @@ class Process
 		
 	}
 }
+
+module.exports = Job;

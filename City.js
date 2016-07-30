@@ -18,6 +18,8 @@ let SpeciesMod = require('./Species');
 let Species = SpeciesMod.Species;
 let Niche = SpeciesMod.Niche;
 
+let Job = require('./Job');
+
 class CityManager
 {
 	constructor()
@@ -65,5 +67,7 @@ class City
 		console.log("Food Supplies:" + this.inventory.foodAmount());
 		
 	}
+	
+	
 	
 }
