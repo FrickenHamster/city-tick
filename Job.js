@@ -2,6 +2,8 @@
  * Created by alexanderyan on 7/28/16.
  */
 
+let COMMODITY_IDS = require('./Commodity').COMMODITY_IDS;
+
 const JobIDs = {
 	FARM: 0
 };
@@ -38,7 +40,22 @@ function addProcess(id, inputs, outputs, time)
 
 function initProcesses()
 {
-	
+	addProcess(PROCESS_IDS.FARM_APPLE, [], [COMMODITY_IDS.APPLE], 20);
+}
+
+const PROCESS_STATE = {
+	LOADING_INPUTS: 0,
+	READY_TO_START: 1,
+	WORKING: 2,
+};
+
+class Process
+{
+	constructor(type)
+	{
+		this.type = type;
+		this.state = PROCESS_STATE.LOADING_INPUTS;
+	}
 }
 
 
