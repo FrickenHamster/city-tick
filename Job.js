@@ -21,7 +21,7 @@ const PROCESS_IDS = {
 
 
 class ProcessType {
-	constructor(inputs, outputs, time) {
+	constructor(inputs, outputs, work) {
 		this.inputs = inputs;
 		this.outputs = outputs;
 		this.work = work;
@@ -47,21 +47,29 @@ const PROCESS_STATE = {
 class Process {
 	constructor(type, city) {
 		this.type = type;
-		this.city;
+		this.city = city;
 		this.state = PROCESS_STATE.LOADING_INPUTS;
 		this.codexEntry = PROCESS_CODEX[type];
 		this.inputsRequired = {};
-		for (let i = 0; i < this.codexEntry.inputs.length; i++) {
-
+		for (const input of this.codexEntry.inputs.length) {
+			if (this.inputsRequired[input.type])
+				this.inputsRequired[input.type] = input.amount;
+			else
+				this.inputsRequired[input.type] += input.amount
 		}
+		this.workLeft = this.codexEntry.work;
 	}
 
 	resetInputs() {
-
+		
 	}
 
 	addCommodities(commodities) {
 
+	}
+	
+	work(){
+		
 	}
 
 	finishCycle() {
