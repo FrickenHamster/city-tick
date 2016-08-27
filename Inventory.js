@@ -2,75 +2,66 @@
  * Created by alexanderyan on 7/18/16.
  */
 
-let Com = require('./Commodity');
-let Commodity = Com.Commodity;
-let COMMODITY_IDS = Com.COMMODITY_IDS;
-let ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
+const Com = require('./Commodity');
+const Commodity = Com.Commodity;
+const COMMODITY_IDS = Com.COMMODITY_IDS;
+const ITEM_ATTR_ID = Com.ITEM_ATTR_ID;
+const COMMODITY_CODEX = Com.COMMODITY_CODEX;
+const ITEM_ATTR_CODEX = Com.ITEM_ATTR_CODEX;
 
-
-class Inventory
-{
-	constructor(niche)
-	{
+class Inventory {
+	constructor(niche) {
 		this.foodList = [];
 		this.commodityTypes = {};
 		this.niche = niche;
 	}
 
-	gainCommodities(commodity)
-	{
+	gainCommodities(commodity) {
 		let storageKey = commodity.getStorageKey();
 		let comTypeGroup = this.commodityTypes[commodity.type];
 
-		if (!comTypeGroup)
-		{
+		if (!comTypeGroup) {
 			comTypeGroup = {};
 			this.commodityTypes[commodity.type] = comTypeGroup;
 		}
 		let uniqueCom = comTypeGroup[storageKey];
-		if (uniqueCom)
-		{
+		if (uniqueCom) {
 			uniqueCom.gainAmount(commodity.amount);
 		}
-		else
-		{
+		else {
 			comTypeGroup[storageKey] = commodity;
 			commodity.inventory = this;
-			if (commodity.canBeEatenByNiche(this.niche))
-			{
+			if (commodity.canBeEatenByNiche(this.niche)) {
 				this.foodList.push(commodity);
 			}
 		}
 	}
-	
-	loseCommodity(commodity)
-	{
+
+	loseCommodity(commodity) {
 		let key = commodity.getStorageKey();
 		let comTypeGroup = this.commodityTypes[commodity.type];
 		delete comTypeGroup[key];
+		if (Object.keys(comTypeGroup).length == 0)
+			delete this.commodityTypes[commodity.type];
 		if (commodity.canBeEatenByNiche(this.niche));
 		{
 			this.foodList.splice(this.foodList.indexOf(commodity));
 		}
 	}
-	
-	foodAmount()
-	{
+
+	foodAmount() {
 		let count = 0;
-		for (let i = 0; i < this.foodList.length; i++)
-		{
+		for (let i = 0; i < this.foodList.length; i++) {
 			count += this.foodList[i].amount;
 		}
 		return count;
 	}
-	
-	loseFood(amt)
-	{
+
+	loseFood(amt) {
 		let foodamt = this.foodAmount();
 		let ratio = amt / foodamt;
 		let curTaken = 0;
-		for (let i = 0; i < this.foodList.length; i++)
-		{
+		for (let i = 0; i < this.foodList.length; i++) {
 			let com = this.foodList[i];
 			let fm = Math.floor(com.amount * ratio);
 			if (curTaken + fm > amt)
@@ -80,8 +71,7 @@ class Inventory
 			if (curTaken >= amt)
 				return;
 		}
-		for (let i = 0; i < this.foodList.length; i++)
-		{
+		for (let i = 0; i < this.foodList.length; i++) {
 			if (curTaken >= amt)
 				break;
 			let com = this.foodList[i];
@@ -89,7 +79,25 @@ class Inventory
 			curTaken += 1;
 		}
 	}
-	
+
+	generateReport() {
+		let report = '';
+		for (const typeKey in this.commodityTypes) {
+			report += `${COMMODITY_CODEX[typeKey].name}\n`;
+			const comType = this.commodityTypes[typeKey];
+			for (const comKey in comType) {
+				const com = comType[comKey];
+				for (const attrKey in com.itemAttrs) {
+					const attr = com.itemAttrs[attrKey];
+					report += `${ITEM_ATTR_CODEX[attrKey].name} ${attr.value}/${attr.maxValue} `;
+				}
+				report += `| amount ${com.amount}`;
+			}
+			report += '\n';
+		}
+		return report;
+	}
+
 }
 
 module.exports = {

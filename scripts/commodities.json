@@ -111,6 +111,16 @@
       "LEVEL",
       "QUALITY"
     ]
+  },
+  "IRON_INGOT": {
+    "name": "Iron Ingot",
+    "props": {
+    },
+    "itemAttrs": [
+      "CONDITION",
+      "LEVEL",
+      "QUALITY"
+    ]
   }
 }
 
